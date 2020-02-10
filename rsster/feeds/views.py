@@ -7,7 +7,7 @@ from feeds.models import Feed, Entry
 def index(request):
     template = loader.get_template('feeds/index.html')
     latest_entries = Entry.entries.order_by('-published')[:10]
-    context = {'latest_entires': latest_entries}
+    context = {'latest_entries': latest_entries}
     return HttpResponse(template.render(context, request))
 
 def harvest(request):

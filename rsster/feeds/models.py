@@ -66,6 +66,8 @@ class Entry(models.Model):
                         and 'image' in r.get('type', None)
                         and r.get('href') not in contents):
                     contents = contents + ' <br/><img src="%s">' % r.get('href', "#")
-        e = Entry(feed=feed, title=entry.title, description=entry.summary, contents=contents,
+
+        item, created = Entry.entries.get_or_create(feed=feed, title=entry.title, description=entry.summary, contents=contents,
                            url=entry.link, guid=entry.link, published=published)
-        e.save()
+        print(created)
+        item.save()

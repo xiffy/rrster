@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>rsster</title>
+</head>
+<body>
+django time
+{% if latest_entries %}
+    {% for entry in latest_entries %}
+        {{ entry.title }}
+    {% endfor %}
+{% else %}
+<p>harvest first!</p>
+{% endif %}
+</body>
+</html>

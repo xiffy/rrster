@@ -16,30 +16,56 @@
             <div class="feed_title">
 				<h1><a href="/feed/{{entry.feed.id}}">{{ entry.feed.title }}</a></h1>
 					<div class="feed_description">
-						<h3>{% if feed.description %}{{ feed.description }}{% endif %} </h3>
+						<h3>{% if entry.feed.description %}{{ entry.feed.description }}{% endif %} </h3>
                         <span class="links">
-							<a href="{{feed.url}}" title="website"><span class="simple-svg" data-icon="mdi-rss" data-inline="false"></span></a>
-							{% if feed.web_url %}
-							<a href="{{feed.web_url}}" title="website"><span class="simple-svg" data-icon="zmdi-home" data-inline="false"></span></a>
+							<a href="{{entry.feed.url}}" title="originele feed">
+                                <span class="simple-svg" data-icon="mdi-rss" data-inline="false"></span></a>
+							{% if entry.feed.web_url %}
+							<a href="{{entry.feed.web_url}}" title="website">
+                                <span class="simple-svg" data-icon="zmdi-home" data-inline="false"></span></a>
 							{% endif %}
-							{% if feed.image %}
-							<img class="sitelogo" src="{{feed.image}}"/>
+							{% if entry.feed.image %}
+							<img class="sitelogo" src="{{entry.feed.image}}"/>
 							{%endif %}
 						</span>
 				</div>
             </div>
         {% endifchanged %}
-            <h2><a href="{{ entry.url }}"  title="Read">{{ entry.title }}</a></h2>
+            <div class="entry_title">
+                <h2 ><a href="{{ entry.url }}"  title="Read">{{ entry.title }}</a></h2>
+            </div>
             <div class="entry_contents">
             {{ entry.contents|safe }}
             </div>
             <p>{{ entry.published }} {{ entry.feed.title }}</p>
         </div>
     {% endfor %}
+    {% if latest_entries.has_other_pages %}
+        <div class="entry navigation">
+        {{ latest_entries.number }} - {{ latest_entries.next_page_number }} - {{ latest_entries.has_next }}
+  				<div class="navwrap">
+                    <div class="previous_entries">
+                        {% if latest_entries.has_previous %}
+                            <a href="?page={{ latest_entries.previous_page_number }}" class="previous">&laquo; newer</a>
+                        {% else %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div class="next_entries">
+                        {%  if latest_entries.has_next %}
+                            <a href="?page={{ latest_entries.next_page_number }}" class="next">&raquo; older</a>
+                        {% else %}
+                            end!
+                        {% endif %}
+                    </div>
+                </div>
+        </div>
+    {% endif %}
 {% else %}
 <p>harvest first!</p>
 {% endif %}
     </div>
 </div>
+<script src="//code.simplesvg.com/1/1.0.0-beta5/simple-svg.min.js"></script>
 </body>
 </html>

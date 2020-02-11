@@ -1,27 +1,7 @@
 from django.db import models
+from . import Feed
 import datetime
 import time
-
-
-class ActiveFeeds(models.Model):
-    def get_queryset(self):
-        return super().get_queryset().filter(active=True)
-
-class Feed(models.Model):
-    url = models.CharField(db_index=True, max_length=255)
-    title = models.CharField(max_length=255, blank=True, default='')
-    image = models.CharField(max_length=255, blank=True, default='')
-    description = models.TextField(blank=True, default='')
-    update_interval = models.IntegerField(default=59)
-    feed_last_publication = models.DateTimeField(auto_now_add=True, blank=True)
-    web_url = models.CharField(max_length=255, blank=True, default='')
-    active = models.BooleanField(default=True)
-
-    feeds = models.Manager()
-    active_feeds = ActiveFeeds()
-
-    def __str__(self):
-        return "%s: %s " % (self.url, self.title)
 
 
 class Entry(models.Model):
@@ -68,9 +48,9 @@ class Entry(models.Model):
                     contents = contents + ' <br/><img src="%s">' % r.get('href', "#")
 
         item, created = Entry.entries.get_or_create(feed=feed, title=entry.title, url=entry.link)
-        item.description = entry.summary
-        item.contents = contents
-        item.guid = entry.link
-        item.published = published
-        print(created)
-        item.save()
+        if created:
+            item.description = entry.summary
+            item.contents = contents
+            item.guid = entry.link
+            item.published = published
+            item.save()

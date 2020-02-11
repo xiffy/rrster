@@ -8,7 +8,7 @@
 django time
 {% if latest_entries %}
     {% for entry in latest_entries %}
-        {{ entry.title }}
+        <h5>{{ entry.title }}</h5>
     {% endfor %}
 {% else %}
 <p>harvest first!</p>

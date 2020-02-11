@@ -6,11 +6,12 @@ from feeds.models import Feed, Entry
 
 def index(request):
     template = loader.get_template('feeds/index.html')
-    latest_entries = Entry.entries.order_by('-published')[:10]
+    latest_entries = Entry.entries.order_by('-published')
     context = {'latest_entries': latest_entries}
     return HttpResponse(template.render(context, request))
 
 def harvest(request):
-    nrc = Feed.feeds.filter(id=1)[0]
-    harvest_one(nrc)
+    candidates = Feed.feeds.filter(active=True)
+    for site in candidates:
+        harvest_one(site)
     return HttpResponse("Harvesting done!")

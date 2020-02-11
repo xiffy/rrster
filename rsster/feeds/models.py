@@ -30,7 +30,7 @@ class Entry(models.Model):
     description = models.TextField(blank=True, default='')
     contents = models.TextField(blank=True, default='')
     url = models.CharField(db_index=True, max_length=255)
-    guid = models.CharField(max_length=255)
+    guid = models.CharField(blank=True, max_length=255)
     last_update = models.DateTimeField(auto_now=True)
     entry_created = models.DateTimeField(auto_now_add=True)
     published = models.CharField(max_length=20, db_index=True, blank=True, default='')
@@ -67,7 +67,10 @@ class Entry(models.Model):
                         and r.get('href') not in contents):
                     contents = contents + ' <br/><img src="%s">' % r.get('href', "#")
 
-        item, created = Entry.entries.get_or_create(feed=feed, title=entry.title, description=entry.summary, contents=contents,
-                           url=entry.link, guid=entry.link, published=published)
+        item, created = Entry.entries.get_or_create(feed=feed, title=entry.title, url=entry.link)
+        item.description = entry.summary
+        item.contents = contents
+        item.guid = entry.link
+        item.published = published
         print(created)
         item.save()

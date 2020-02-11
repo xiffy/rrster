@@ -4,3 +4,4 @@ tmp/*
 htmlcov/*
 .coverage
 .idea/*
+/rsster/db.sqlite3

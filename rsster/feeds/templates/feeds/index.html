@@ -42,7 +42,6 @@
     {% endfor %}
     {% if latest_entries.has_other_pages %}
         <div class="entry navigation">
-        {{ latest_entries.number }} - {{ latest_entries.next_page_number }} - {{ latest_entries.has_next }}
   				<div class="navwrap">
                     <div class="previous_entries">
                         {% if latest_entries.has_previous %}
@@ -53,9 +52,9 @@
                     </div>
                     <div class="next_entries">
                         {%  if latest_entries.has_next %}
-                            <a href="?page={{ latest_entries.next_page_number }}" class="next">&raquo; older</a>
+                            <a href="?page={{ latest_entries.next_page_number }}" class="next">older &raquo; </a>
                         {% else %}
-                            end!
+                            &nbsp;
                         {% endif %}
                     </div>
                 </div>

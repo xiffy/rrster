@@ -37,7 +37,8 @@
             <div class="entry_contents">
             {{ entry.contents|safe }}
             </div>
-            <p>{{ entry.published }} {{ entry.feed.title }}</p>
+            {%  include "feeds/entry_info.html" %}
+            <!--p>{{ entry.published }} {{ entry.feed.title }}</p -->
         </div>
     {% endfor %}
     {% if latest_entries.has_other_pages %}

@@ -18,7 +18,7 @@ def harvest(feed=None):
                     if added:
                         feed.feed_last_update = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                 if response.status in [301, 302, 307]:
-                    feed.url = response.get('href', self.url)
+                    feed.url = response.get('href', feed.url)
             elif response.status in [410, 404]:
                 feed.active = 0
         else:
@@ -26,15 +26,12 @@ def harvest(feed=None):
         feed.last_update = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         feed.save()
 
-        print(response.status, end=' ')
-        print(response.feed.title)
 
 def _parse_feed(feed, response_feed):
     feed.title = response_feed.title if hasattr(response_feed, 'title') else ''
     feed.description = response_feed.sub_title if hasattr(response_feed, 'sub_title') else ''
-    feed.image = response_feed.image.get('ref', '' )  if hasattr(response_feed, 'image') else ''
+    feed.image = response_feed.image.get('ref', '') if hasattr(response_feed, 'image') else ''
     for link in response_feed.links:
         if link.get('type', None) == 'text/html' and link.get('rel', None) == 'alternate':
             feed.web_url = link.href
-    print(feed)
     return True

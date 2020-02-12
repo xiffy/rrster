@@ -262,6 +262,7 @@ a.menudrop {
 	-moz-box-shadow: 3px 3px 10px 0px rgba(69,69,69,1);
 	box-shadow: 3px 3px 10px 0px rgba(69,69,69,1);
 	overflow: auto;
+	position: relative;
 }
 
 .entry a {
@@ -278,6 +279,8 @@ a.menudrop {
 	color: #121420;
 	border: none;
 }
+.entry_contents {
+    margin-bottom: 25px;}
 
 .entry_contents blockquote,
 .entry_contents pre {
@@ -289,13 +292,15 @@ a.menudrop {
 
 
 .entry_info {
-	margin-top: 10px;
 	padding: 5px;
+	margin-top: 20px;
 	border-top: 1px dashed #bbb;
 	background: #f7f7e8;
 	font-size: 14px;
+	position: absolute;
+	bottom: 5px;
+	width: 95%;
 }
-
 
 .entry .navwrap {
 	background: #403f4c;

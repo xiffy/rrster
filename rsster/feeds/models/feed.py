@@ -1,10 +1,6 @@
 from django.db import models
 
 
-class ActiveFeeds(models.Model):
-    def get_queryset(self):
-        return super().get_queryset().filter(active=True)
-
 class Feed(models.Model):
     url = models.CharField(db_index=True, max_length=255)
     title = models.CharField(max_length=255, blank=True, default='')
@@ -16,7 +12,6 @@ class Feed(models.Model):
     active = models.BooleanField(default=True)
 
     feeds = models.Manager()
-    active_feeds = ActiveFeeds()
 
     def __str__(self):
         return "%s: %s " % (self.url, self.title)

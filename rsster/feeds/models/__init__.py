@@ -1,4 +1,4 @@
-from feeds.models.feed import Feed, ActiveFeeds
+from feeds.models.feed import Feed
 from feeds.models.entry import Entry
 
-__all__ = ['Feed', 'Entry', 'ActiveFeeds']
+__all__ = ['Feed', 'Entry']

@@ -1,3 +1,4 @@
+import datetime as dt
 from django.http import HttpResponse, Http404
 from django.template import loader
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -28,7 +29,7 @@ def harvest(request):
     candidates = Feed.feeds.filter(active=True)
     for site in candidates:
         harvest_one(site)
-    return HttpResponse("Harvesting done!")
+    return HttpResponse("Harvesting done! - %s" % dt.datetime.now())
 
 
 def paged(entries, request):

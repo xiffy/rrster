@@ -18,7 +18,7 @@ class Entry(models.Model):
     entries = models.Manager()
 
     def __str__(self):
-        return "%s %s %s" % (self.id, self.published, self.title)
+        return "%s %s %s [%s]" % (self.id, self.published, self.title, self.feed)
 
     class Meta:
         verbose_name_plural = "entries"

@@ -1,8 +1,10 @@
 import datetime
+import unittest
 
-from django.test import TestCase
+from django.test import TestCase, Client
 from .models.feed import Feed
 from .models.entry import Entry
+from .logic import harvest
 
 
 class FeedTestCase(TestCase):
@@ -10,12 +12,21 @@ class FeedTestCase(TestCase):
         Feed.feeds.create(url='https://example.com/rss.xml', title='the web by example')
         Feed.feeds.create(url='https://notasite.org/rss/index.xml',
                           title='you had been warned', update_interval=71, active=False)
+        Feed.feeds.create(url='https://molecule.nl/decorrespondent/rss.php')
 
     def test_feed_found(self):
         example = Feed.feeds.get(url='https://example.com/rss.xml')
         nosite = Feed.feeds.get(url='https://notasite.org/rss/index.xml')
         self.assertEqual(example.title, 'the web by example')
         self.assertEqual(nosite.title, 'you had been warned')
+
+    def test_harvest(self):
+        molecule = Feed.feeds.get(url='https://molecule.nl/decorrespondent/rss.php')
+        harvest(molecule)
+        latest_entries = Entry.entries.filter(feed__url='https://molecule.nl/decorrespondent/rss.php')\
+                                      .order_by('-published').select_related('feed')
+        entries = len(latest_entries)
+        self.assertEqual(entries, 50)
 
 
 class EntryTestCase(TestCase):
@@ -52,6 +63,19 @@ class EntryTestCase(TestCase):
         latest_entries = Entry.entries.filter(feed__active=True).order_by('-published').select_related('feed')
         entries = len(latest_entries)
         self.assertEqual(entries, 3)
+
+
+class TestViews(unittest.TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def testHome(self):
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+
+    def testFeed(self):
+        response = self.client.get('/feed/1')
+        self.assertEqual(response.status_code, 200)
 
 
 class FeedparserEntryMock:

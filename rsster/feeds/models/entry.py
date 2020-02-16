@@ -28,6 +28,8 @@ class Entry(models.Model):
         """ digest python_feedparser entries and creates rsspy entries """
         if not hasattr(entry, 'link'):
             return False
+        if not hasattr(entry, 'title'):
+            return False
 
         contents = ''
         if hasattr(entry, 'content'):

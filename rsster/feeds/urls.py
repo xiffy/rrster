@@ -19,5 +19,5 @@ from . import views
 urlpatterns = [
     path('', views.index, name='index'),
     path('harvest', views.harvest, name='harvest'),
-    path('feed/<int:id>', views.feed_view, name='feed')
+    path('feed/<int:feedid>', views.feed_view, name='feed')
 ]

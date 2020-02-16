@@ -23,7 +23,8 @@ class Entry(models.Model):
     class Meta:
         verbose_name_plural = "entries"
 
-    def parse_and_create(self, entry, feed):
+    @staticmethod
+    def parse_and_create(entry, feed):
         """ digest python_feedparser entries and creates rsspy entries """
         if not hasattr(entry, 'link'):
             return False

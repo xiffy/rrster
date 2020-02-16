@@ -15,11 +15,11 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-def feed_view(request, id=None):
-    if not id:
+def feed_view(request, feedid=None):
+    if not feedid:
         raise Http404("Please provide a FeedId")
     template = loader.get_template('feeds/index.html')
-    feed_entries = Entry.entries.filter(feed__id=id, feed__active=True).order_by('-published')
+    feed_entries = Entry.entries.filter(feed__id=feedid, feed__active=True).order_by('-published')
     entries = paged(feed_entries, request)
     context = {'latest_entries': entries}
     return HttpResponse(template.render(context, request))

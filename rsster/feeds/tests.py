@@ -15,6 +15,7 @@ class FeedTestCase(TestCase):
         example = Feed.feeds.get(url='https://example.com/rss.xml')
         nosite = Feed.feeds.get(url='https://notasite.org/rss/index.xml')
         self.assertEqual(example.title, 'the web by example')
+        self.assertEqual(nosite.title, 'you had been warned')
 
 
 class EntryTestCase(TestCase):
@@ -40,8 +41,10 @@ class EntryTestCase(TestCase):
 
     def test_parse_and_create(self):
         example = Feed.feeds.get(url='https://example.com/rss.xml')
-        to_parse = FeedparserEntryMock(link='https://example.com/story/3', contents='lief dagboek, dit is de contents',
-                                       summary='lief dagboek ...', title='This is a story all about how my life got turned',
+        to_parse = FeedparserEntryMock(link='https://example.com/story/3',
+                                       contents='lief dagboek, dit is de contents',
+                                       summary='lief dagboek ...',
+                                       title='This is a story all about how my life got turned',
                                        published_parsed=datetime.datetime.now().timetuple())
         Entry().parse_and_create(entry=to_parse, feed=example)
         entries = Entry.entries.count()
@@ -49,6 +52,7 @@ class EntryTestCase(TestCase):
         latest_entries = Entry.entries.filter(feed__active=True).order_by('-published').select_related('feed')
         entries = len(latest_entries)
         self.assertEqual(entries, 3)
+
 
 class FeedparserEntryMock:
     def __init__(self, link=None, title=None, contents=None, summary=None, published_parsed=None):

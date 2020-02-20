@@ -44,7 +44,8 @@ def api_feed(request, feedid=None):
             alreadyhere, created = Feed.feeds.get_or_create(url=request.POST['url'])
             if alreadyhere and created:
                 harvest_one(alreadyhere)
-            return feed_view(request, feedid=alreadyhere.id)
+            feed_entries = Entry.entries.filter(feed__id=alreadyhere.id, feed__active=True).order_by('-published')[:2]
+            return JsonResponse(list(feed_entries.values()), safe=False)
         else:
             return ('Please provide a valid feed-URL')
     if request.method == 'PUT' and request.body:
@@ -63,7 +64,7 @@ def api_feed(request, feedid=None):
             channel.web_url = data.get('web_url') if data.get('web_url', None) else channel.web_url
             channel.save()
 
-            feed_entries = Entry.entries.filter(feed__id=channel.id, feed__active=True).order_by('-published')[:100]
+            feed_entries = Entry.entries.filter(feed__id=channel.id).order_by('-published')[:100]
             return JsonResponse(list(feed_entries.values()), safe=False)
         return JsonResponse({'error': 'Please provide a known URL'})
 

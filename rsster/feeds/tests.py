@@ -77,6 +77,11 @@ class TestViews(unittest.TestCase):
         response = self.client.get('/feed/1')
         self.assertEqual(response.status_code, 200)
 
+    def testApiPost(self):
+        response = self.client.post('/feeds/api/feed', {'url': 'https://www.nrc.nl/rss/'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'],'application/json')
+
 
 class FeedparserEntryMock:
     def __init__(self, link=None, title=None, contents=None, summary=None, published_parsed=None):

@@ -64,7 +64,7 @@ def api_feed(request, feedid=None):
             channel.web_url = data.get('web_url') if data.get('web_url', None) else channel.web_url
             channel.save()
 
-            feed_entries = Entry.entries.filter(feed__id=channel.id).order_by('-published')[:100]
+            feed_entries = Entry.entries.filter(feed__id=channel.id).order_by('-published')[:15]
             return JsonResponse(list(feed_entries.values()), safe=False)
         return JsonResponse({'error': 'Please provide a known URL'})
 

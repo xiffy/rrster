@@ -1,7 +1,9 @@
+import json
 import datetime as dt
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.template import loader
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.decorators.csrf import csrf_exempt
 
 from .logic import harvest as harvest_one
 from .models import Feed, Entry
@@ -31,6 +33,38 @@ def harvest(request):
         harvest_one(site)
     return HttpResponse("Harvesting done! - %s" % dt.datetime.now())
 
+@csrf_exempt
+def api_feed(request, feedid=None):
+    if request.method == 'GET' and feedid:
+        feed_entries = Entry.entries.filter(feed__id=feedid, feed__active=True).order_by('-published')[:100]
+        return JsonResponse(list(feed_entries.values()), safe=False)
+    if request.method == 'POST' and request.POST:
+        if request.POST.get('url', None).startswith('http'):
+            alreadyhere, created = Feed.feeds.get_or_create(url=request.POST['url'])
+            if alreadyhere and created:
+                harvest_one(alreadyhere)
+            return feed_view(request, feedid=alreadyhere.id)
+        else:
+            return ('Please provide a valid feed-URL')
+    if request.method == 'PUT' and request.body:
+        data = json.loads(request.body.decode('utf-8'))
+        if data.get('url', None):
+            channel = Feed.feeds.get(url=data.get('url'))
+            if channel:
+                channel.update_interval = data.get('update_interval') \
+                    if data.get('update_interval', None) else channel.update_interval
+                channel.title = data.get('title') if data.get('title', None) else channel.title
+                channel.active = data.get('active') if data.get('active', None) else channel.active
+                channel.image = data.get('image') if data.get('image', None) else channel.image
+                channel.description = data.get('description') if data.get('description', None) else channel.description
+                channel.web_url = data.get('web_url') if data.get('web_url', None) else channel.web_url
+                channel.save()
+                feed_entries = Entry.entries.filter(feed__id=channel.id, feed__active=True).order_by('-published')[:100]
+                return JsonResponse(list(feed_entries.values()), safe=False)
+
+        return HttpResponse('This is your new home?')
+
+    return HttpResponse('%s in je broekje' % request.method)
 
 def paged(entries, request):
     page = request.GET.get('page', 1)

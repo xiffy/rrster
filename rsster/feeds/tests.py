@@ -79,7 +79,8 @@ class TestViews(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def testApiPost(self):
-        response = self.client.post('/feeds/api/feed', {'url': 'https://www.nrc.nl/rss/'})
+        response = self.client.post('/feeds/api/feed',
+                                    {"url": "https://www.nrc.nl/rss/"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
 
@@ -87,7 +88,8 @@ class TestViews(unittest.TestCase):
         response = self.client.put('/feeds/api/feed',
                                    json.dumps({"url": "https://www.nrc.nl/rss/",
                                                "title": "weer wat nieuws",
-                                               "update_interval": "66"}))
+                                               "update_interval": "66"}),
+                                   content_type='application/json')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
         content = json.loads(response.content)

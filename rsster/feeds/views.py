@@ -26,7 +26,7 @@ def feed_view(request, feedid=None):
     feed_entries = Entry.entries.filter(feed__id=feedid, feed__active=True).order_by('-published')
     entries = paged(feed_entries, request)
     context = {'latest_entries': entries,
-               'page': {'title': "%s" % (feed_entries[0].feed.title)},
+               'page': {'title': "%s" % feed_entries[0].feed.title},
                }
     return HttpResponse(template.render(context, request))
 
@@ -37,11 +37,12 @@ def group_view(request, groupid=None):
     group = Group.objects.get(id=groupid)
     if not group:
         raise Http404("No! please provide a valid GroupID")
+    by = 'you' if request.user == group.user else group.user
     f = Feed.feeds.filter(groups__id=groupid)
     group_entries = Entry.entries.filter(feed__id__in=f, feed__active=True).order_by('-published')
     entries = paged(group_entries, request)
     context = {'latest_entries': entries,
-               'page': {'title': "%s by %s" % (group.description, group.user)},
+               'page': {'title': "%s [by %s]" % (group.description, by)},
                }
     template = loader.get_template('feeds/index.html')
     return HttpResponse(template.render(context, request))

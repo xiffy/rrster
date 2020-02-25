@@ -22,4 +22,5 @@ urlpatterns = [
     path('feed/<int:feedid>', views.feed_view, name='feed'),
     path('feeds/api/feed', views.api_feed, name='api_feeds'),
     path('feeds/api/feed/<int:feedid>', views.api_feed, name='api_feeds_feed'),
+    path('group/<int:groupid>', views.group_view, name='groupview'),
 ]

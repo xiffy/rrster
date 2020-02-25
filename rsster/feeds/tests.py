@@ -3,6 +3,7 @@ import unittest
 import json
 
 from django.test import TestCase, Client
+from django.contrib.auth import get_user_model
 from .models.feed import Feed
 from .models.entry import Entry
 from .logic import harvest
@@ -64,6 +65,18 @@ class EntryTestCase(TestCase):
         latest_entries = Entry.entries.filter(feed__active=True).order_by('-published').select_related('feed')
         entries = len(latest_entries)
         self.assertEqual(entries, 3)
+
+
+class GroupTestCase(TestCase):
+    def setUp(self):
+        self.f1 = Feed.feeds.create(url='https://example.com/rss.xml', title='the web by example')
+        self.f2 = Feed.feeds.create(url='https://notasite.org/rss/index.xml',
+                          title='you had been warned', update_interval=71, active=False)
+        self.f3 = Feed.feeds.create(url='https://molecule.nl/decorrespondent/rss.php')
+        User = get_user_model()
+        self.user = User.objects.create_user('test_user', 'no_clue@gmail.com', 'test1234')
+
+
 
 
 class TestViews(unittest.TestCase):

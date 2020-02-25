@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.views.decorators.csrf import csrf_exempt
 
 from .logic import harvest as harvest_one
-from .models import Feed, Entry
+from .models import Feed, Entry, Group
 
 
 def index(request):
@@ -28,11 +28,25 @@ def feed_view(request, feedid=None):
     return HttpResponse(template.render(context, request))
 
 
+def group_view(request, groupid=None):
+    if not groupid:
+        raise Http404("please provide a valid GroupID")
+    group = Group.objects.filter(id=groupid).select_related('user')
+    if not group:
+        raise Http404("No! please provide a valid GroupID")
+    f = Feed.feeds.filter(groups__id=groupid)
+    print(f)
+    group_entries = Entry.entries.filter(feed__id__in=f, feed__active=True).order_by('-published')[:10]
+    print(group_entries)
+    return HttpResponse('Hoi')
+
+
 def harvest(request):
     candidates = Feed.feeds.filter(active=True)
     for site in candidates:
         harvest_one(site)
     return HttpResponse("Harvesting done! - %s" % dt.datetime.now())
+
 
 @csrf_exempt
 def api_feed(request, feedid=None):
@@ -47,7 +61,7 @@ def api_feed(request, feedid=None):
             feed_entries = Entry.entries.filter(feed__id=alreadyhere.id, feed__active=True).order_by('-published')[:2]
             return JsonResponse(list(feed_entries.values()), safe=False)
         else:
-            return ('Please provide a valid feed-URL')
+            return 'Please provide a valid feed-URL'
     if request.method == 'PUT' and request.body:
         data = json.loads(request.body.decode('utf-8'))
         if data.get('url', None):
@@ -56,7 +70,7 @@ def api_feed(request, feedid=None):
             except ObjectDoesNotExist:
                 return JsonResponse({'error': 'Please provide a known URL'})
             channel.update_interval = data.get('update_interval') \
-                    if data.get('update_interval', None) else channel.update_interval
+                if data.get('update_interval', None) else channel.update_interval
             channel.title = data.get('title') if data.get('title', None) else channel.title
             channel.active = data.get('active') if data.get('active', None) else channel.active
             channel.image = data.get('image') if data.get('image', None) else channel.image
@@ -69,6 +83,7 @@ def api_feed(request, feedid=None):
         return JsonResponse({'error': 'Please provide a known URL'})
 
     return HttpResponse('%s in je broekje' % request.method)
+
 
 def paged(entries, request):
     page = request.GET.get('page', 1)

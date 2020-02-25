@@ -35,10 +35,11 @@ def group_view(request, groupid=None):
     if not group:
         raise Http404("No! please provide a valid GroupID")
     f = Feed.feeds.filter(groups__id=groupid)
-    print(f)
-    group_entries = Entry.entries.filter(feed__id__in=f, feed__active=True).order_by('-published')[:10]
-    print(group_entries)
-    return HttpResponse('Hoi')
+    group_entries = Entry.entries.filter(feed__id__in=f, feed__active=True).order_by('-published')
+    entries = paged(group_entries, request)
+    context = {'latest_entries': entries}
+    template = loader.get_template('feeds/index.html')
+    return HttpResponse(template.render(context, request))
 
 
 def harvest(request):

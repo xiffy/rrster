@@ -10,6 +10,6 @@ class Group(models.Model):
     feeds = models.ManyToManyField(Feed, related_name='groups')
 
     def __str__(self):
-        return "%s [%s]" % (self.description, self.feeds.all())
+        return "%s [%s]" % (self.description, self.user)
 
 

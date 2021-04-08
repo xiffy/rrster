@@ -1,5 +1,5 @@
 asgiref==3.2.3
-Django==3.1.6
+Django==3.1.8
 django-background-tasks==1.2.5
 django-compat==1.0.15
 feedparser==5.2.1
